@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+
+<html>
+
+	<head>
+		<meta charset="utf-8">
+        <meta name="author" content="HAMZA BENJELLOUN & IMADEDDINE ELAASSALI G.INFO">
+		<title>Level 4</title>
+
+		<style>
+
+			* { margin:0; padding:0; }
+
+			html, body { height:100%; width:100%;background: url("../Background/background.png");}
+
+			body { background-color:#000000; display:grid; }
+
+			canvas { align-self:center; justify-self:center; }
+			audio{
+				display:none;
+			}
+
+		</style>
+
+	</head>
+
+	<body>
+		<canvas></canvas>
+		<audio id="Death" controls autoplay>
+			<source src="../Music/Death.mp3" type="audio/mp3">
+		</audio>
+		<audio id="player" controls autoplay loop>
+			<source src="../Music/musicPart4.mp3" type="audio/mp3">
+		</audio>
+		<audio id="jump" controls autoplay>
+			<source src="../Music/jump.mp3" type="audio/mp3">
+		</audio>
+		<audio id="move" controls autoplay>
+			<source src="../Music/walk.mp3" type="audio/mp3">
+		</audio>
+		<script type = "text/javascript">
+		        var audio=document.getElementById("player");
+				audio.volume=1;		
+		        document.addEventListener('keydown', musicPlayjump);
+                function musicPlayjump() {
+			        document.getElementById('player').play();
+                    document.removeEventListener('keydown', musicPlayjump);
+                }
+			const Controller = function() {
+
+				this.left = this.right = this.up = false;
+
+			};
+
+			Controller.prototype.keyDownUp = function(event) {
+
+				var down = event.type == "keydown" ? true : false;
+
+				switch(event.keyCode) {
+					case 37: 
+					case 65:
+					document.getElementById('move').play();
+					this.left = down; break;
+					case 32:
+					case 38:
+					case 87:
+					document.getElementById('jump').play();
+					this.up = down; break;
+					case 39:
+					case 68: 
+					document.getElementById('move').play();
+					this.right = down; break;
+				}
+
+			};
+
+			const Player = function(x, y, source_x, source_w, behavior) {
+
+				this.source_x = source_x;
+				this.source_w = source_w;
+				this.behavior = behavior;
+
+				this.ox = this.x = x;
+				this.oy = this.y = y;
+				this.vx = this.vy = 0;
+
+			};
+
+			Player.prototype = {
+
+				behave:function() { this.behavior(this); },
+
+			};
+
+			const Dude = function(x, y, behavior) {
+
+				Player.call(this, x, y, 240, 16, behavior);
+
+				this.jumping = false;
+
+			};
+
+			Object.assign(Dude.prototype, Player.prototype);
+
+			function dudeBehavior(dude) {
+
+				if (!dude.jumping && controller.up) {
+
+					controller.up = false;
+					dude.vy -= 10;
+					dude.jumping = true;
+
+				}
+
+				if (controller.left) dude.vx -= 0.75;
+				if (controller.right) dude.vx += 0.75;
+
+				var airborne = true;
+
+				dude.vy += gravity;
+				dude.oy = dude.y;
+				dude.ox = dude.x;
+				dude.y += dude.vy;
+				dude.x += dude.vx;
+				if(dude.x>240){
+					airborne = false;
+					dude.x = 240;
+					dude.vx = 0;
+					dude.jumping = false;
+					dude.vy -= dude.vy * friction;
+				}
+				if(dude.x<0){
+					airborne = false;
+					dude.x = 0;
+					dude.vx = 0;
+					dude.jumping = false;
+					dude.vy -= dude.vy * friction;
+				}
+				if(dude.y<0 && dude.x<=300){	
+					window.location.replace("Boss.html");
+				}
+				if(dude.y>=floor && dude.x<=300){
+					document.getElementById('Death').play();
+					setTimeout(function(){ window.location.href= 'part3.html';}, 3000);
+				}
+
+				for (let index = platforms.length - 1; index > -1; -- index) {
+
+					let platform = platforms[index];
+
+					if (dude.x + tile_size * 0.5 > platform.left && dude.x + tile_size * 0.5 < platform.right) {
+
+						if (dude.y + tile_size > platform.floor && dude.oy + tile_size <= platform.oldFloor) {
+
+							airborne = false;
+							dude.y = platform.floor - tile_size;
+							dude.vy = platform.vy;
+							dude.jumping = false;
+							dude.vx += (platform.vx - dude.vx) * friction;
+
+						}
+
+					}
+
+				}
+
+				if (dude.jumping || airborne) {
+					
+					dude.vx -= dude.vx * friction;
+
+				}
+
+
+			}
+
+			const Platform = function(x, y, big, behavior) {
+
+				Player.call(this, x, y, big ? 160 : 208, big ? 46 : 30, behavior);
+
+				this.anchor_x = x;
+				this.anchor_y = y;
+				this.d = 0;
+				this.w = big ? 32 : 16;
+
+			}
+
+			Platform.prototype = {
+
+				get floor() { return this.y + 4; },
+
+				get oldFloor() { return this.oy + 4; },
+
+				get left() { return this.x + 3; },
+				get right() { return this.x + 9 + this.w; }
+
+			};
+
+			Object.assign(Platform.prototype, Player.prototype);
+
+			function platformBehaviorX(platform) {
+				platform.d += 0.06;
+				platform.ox = platform.x;
+				platform.vx = platform.anchor_x + Math.cos(platform.d) * 40 - platform.x;
+				platform.x += platform.vx;
+            }
+            function platformBehaviorupy(platform) {
+                if(platform.y>=160){
+					platform.d +=0.2;
+				    platform.vy = platform.anchor_y - platform.d * 5 - platform.y;	
+				    platform.oy = platform.y;
+                    platform.y += platform.vy;
+                }
+                if(dude.y<=80 ){
+					platform.d += 0.2;
+				    platform.vy = platform.anchor_y + platform.d * 5 - platform.y;
+				}
+            }
+            function platformBehaviorleft(platform) {
+				if(dude.y<=platform.y && dude.x>=platform.x){
+					platform.d += 0.4;
+				    platform.vx = platform.anchor_x + platform.d * 5 - platform.x;
+				    platform.x += 0.01* platform.vx;
+                }	
+                platform.ox = platform.x;
+                platform.x += platform.vx;;
+            }
+            function platformBehaviorright(platform) {
+				if(dude.y<=platform.y && dude.x>=platform.x){
+					platform.d += 0.4;
+				    platform.vx = platform.anchor_x - platform.d * 5 - platform.x;
+				    platform.x += 0.01*platform.vx;
+                }	
+                platform.ox = platform.x;
+                platform.x += platform.vx;;
+			}
+			function platformBehaviorup(platform) {
+				if(dude.y<=platform.y && dude.x<=100){
+					platform.d +=0.05;
+				    platform.vy = platform.anchor_y - platform.d * 5 - platform.y;
+				}	
+				platform.oy = platform.y;
+				platform.y += platform.vy;
+			}
+			function platformBehaviordown(platform) {
+				if(dude.y<=platform.y && dude.x>=platform.x){
+					platform.d += 0.2;
+				    platform.vy = platform.anchor_y + platform.d * 5 - platform.y;
+				}	
+				platform.y += platform.vy;
+				platform.oy = platform.y;
+            }
+            function platformBehaviordownrev(platform) {
+				if(dude.y<=platform.y && dude.x<=(platform.x+4)){
+					platform.d += 0.05;
+				    platform.vy = platform.anchor_y + platform.d * 5 - platform.y;
+				}	
+				platform.y += platform.vy;
+				platform.oy = platform.y;
+			}
+			function platformBehaviorY(platform) {
+
+				platform.d += 0.07;
+				platform.oy = platform.y;
+				platform.vy = platform.anchor_y + Math.sin(platform.d) * 5 - platform.y;
+				platform.y += platform.vy;
+
+            }
+            function platformBehaviorFixed(platform) {
+            }
+			function platformBehaviorLongY(platform) {
+            platform.d += 0.1;
+            platform.oy = platform.y;
+            platform.vy = platform.anchor_y + Math.sin(platform.d) * 20 - platform.y;
+            platform.y += platform.vy;
+            }
+			var tile_set = new Image();
+			var tile_size = 16;
+			var map_columns = 16;
+			var map_rows = 12;
+			var map_ratio = map_columns / map_rows;
+			var map_scale = 1;
+			var map =[16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,
+					  32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,
+					  48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,
+					  64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,
+					  80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,
+					  96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,
+					  112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,
+					  128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,
+					  144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,
+					  160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,
+					  176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,
+					  192,193,194,195,196,197,198,199,200,201,202,203,204,205,206,207];
+			var floor = 190;
+			var friction = 0.4;
+			var gravity = 1;
+			var context = document.querySelector("canvas").getContext("2d");
+			var buffer = document.createElement("canvas").getContext("2d");
+			var screen_h = document.documentElement.clientHeight - 16;
+			var screen_w = document.documentElement.clientWidth - 16;
+			var controller = new Controller();
+
+			var platforms = [ new Platform(20, 190,false, platformBehaviorupy) , new Platform(50, 160,true, platformBehaviorleft),new Platform(1, 90,true, platformBehaviorleft) ,new Platform(210, 125,true, platformBehaviorright),new Platform(210, 60,true, platformBehaviorright) ,new Platform(10, 30,false, platformBehaviordown)];
+
+			var dude = new Dude(28,170, dudeBehavior);
+
+			function loop(time_step) {
+
+				window.requestAnimationFrame(loop);
+
+				screen_h = document.documentElement.clientHeight - 16;
+				screen_w = document.documentElement.clientWidth - 16;
+
+				if (screen_h / buffer.canvas.height < screen_w / buffer.canvas.width) screen_w = screen_h * map_ratio;
+				else screen_h = screen_w / map_ratio;
+
+				map_scale = screen_h / (map_rows * tile_size);
+
+				context.canvas.height = screen_h;
+				context.canvas.width = screen_w;
+				context.imageSmoothingEnabled = false;
+
+				for (let index = map.length - 1; index > -1; -- index) {
+
+					let value = map[index];
+					let tile_x = (index % map_columns) * tile_size;
+					let tile_y = Math.floor(index / map_columns) * tile_size;
+
+					buffer.drawImage(tile_set, value * tile_size, 0, tile_size, tile_size, tile_x, tile_y, tile_size, tile_size);
+
+				}
+
+				for (let index = platforms.length - 1; index > -1; -- index) {
+
+					let platform = platforms[index];
+
+					platform.behave();
+
+					buffer.drawImage(tile_set, platform.source_x, 0, platform.source_w, tile_size, Math.round(platform.x), Math.round(platform.y), platform.source_w, tile_size);
+
+				}
+
+				dude.behave();
+
+				buffer.drawImage(tile_set, dude.source_x, 0, tile_size, tile_size, Math.round(dude.x), Math.round(dude.y), tile_size, tile_size);
+
+				context.drawImage(buffer.canvas, 0, 0, buffer.canvas.width, buffer.canvas.height, 0, 0, context.canvas.width, context.canvas.height);
+
+			}
+
+			buffer.canvas.height = map_rows * tile_size;
+			buffer.canvas.width = map_columns * tile_size;
+
+			tile_set.addEventListener("load", (event) => { loop(); });
+			tile_set.src = "../Platforms/platform4.png";
+
+			window.addEventListener("keydown", (event) => { controller.keyDownUp(event); });
+			window.addEventListener("keyup", (event) => { controller.keyDownUp(event); });
+		</script>
+
+	</body>
+
+</html>

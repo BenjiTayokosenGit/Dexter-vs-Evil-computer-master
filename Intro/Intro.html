@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Instruction</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+        <style>    
+            body{
+                background-color: black;
+                background: url("../Background/background.png");
+                color :white;                
+
+            }           
+            fieldset{
+                background-color: black;
+                border-radius: 10px;
+                margin:5px;
+            }
+            b{
+                color :red;
+            }
+        </style>
+    </head>
+    <body> 
+        <fieldset>     
+        <h1 align="center">Press : <u><b>i</b> to see intro</u> <u><b>ENTER</b> to skip and play the game</u> <u><b>m</b> to go to the menu</u></h1>   
+        </fieldset>         
+        <video id="intro" width="100%" height="630px" loop>        
+            <source src="video/Intro.mp4" type="video/mp4">
+        </video>        
+        <script>
+		    document.addEventListener('keydown', menu);            
+            function menu(e) {
+                switch(e.keyCode){
+                    case 13:
+			           window.location.replace("../Parts/part1.html");   
+                       break;
+                    case 73:
+                       document.getElementById('intro').play();                    
+                       break;
+                    case 77:
+                       window.location.replace("../menu.html");
+                       break;
+                }                 
+            }                   
+        </script>
+        
+    </body>
+</html>

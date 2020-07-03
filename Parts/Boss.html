@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+        <meta name="author" content="HAMZA BENJELLOUN & IMADEDDINE ELAASSALI G.INFO">
+		<title>Boss</title>
+
+		<style>
+
+			* { margin:0; padding:0; }
+
+			html, body { height:100%; width:100%;background: url("../Background/background.png");}
+
+			body { background-color:currentColor; display:grid; }
+
+			canvas { align-self:center; justify-self:center; }
+			audio{
+				display:none;
+			}
+
+		</style>
+
+	</head>
+
+	<body>
+
+		<canvas></canvas>
+		<audio id="Death" controls autoplay>
+			<source src="../Music/Death.mp3" type="audio/mp3">
+		</audio>
+		<audio id="player" controls loop>
+			<source src="../Music/Boss.mp3" type="audio/mp3">
+		</audio>
+		<audio id="jump" controls autoplay>
+			<source src="../Music/jump.mp3" type="audio/mp3">
+		</audio>
+		<audio id="move" controls autoplay>
+			<source src="../Music/walk.mp3" type="audio/mp3">
+		</audio>
+		<script type = "text/javascript">
+		        var r=1;
+		        var q=0;
+		        var h1=0;
+				var h2=0;
+				var h3=0;
+				var h4=0;
+				var h5=0;
+				var h6=0;
+				var h7=0;
+				var h8=0;
+				var h9=0;
+				var h10=0;
+		        var h=0;
+				var k1=0;
+				var k2=0;
+		        var s;
+				var b=0;
+		        var d=[0,80,160];
+	            var i=0;
+		        var j=0;
+				var T;
+		        var audio=document.getElementById("player");
+				audio.volume=0.5;		
+		        document.addEventListener('keydown', musicPlayjump);
+                function musicPlayjump() {
+			        document.getElementById('player').play();
+                    document.removeEventListener('keydown', musicPlayjump);
+                }
+			const Controller = function() {
+
+				this.left = this.right = this.up = false;
+
+			};
+			Controller.prototype.keyDownUp = function(event) {
+
+				var down = event.type == "keydown" ? true : false;
+
+				switch(event.keyCode) {
+					case 37: 
+					case 65:
+					document.getElementById('move').play();
+					this.left = down; break;
+					case 32:
+					case 38:
+					case 87:
+					document.getElementById('jump').play();
+					this.up = down; break;
+					case 39:
+					case 68: 
+					document.getElementById('move').play();
+					this.right = down; break;
+				}
+
+			};
+			const Player = function(x, y, source_x, source_w, behavior) {
+
+				this.source_x = source_x;
+				this.source_w = source_w;
+				this.behavior = behavior;
+
+				this.ox = this.x = x;
+				this.oy = this.y = y;
+				this.vx = this.vy = 0;
+
+			};
+
+			Player.prototype = {
+
+				behave:function() { this.behavior(this); },
+
+			};
+
+			const Dude = function(x, y, behavior) {
+				Player.call(this, x, y,240, 16, behavior);
+
+				this.jumping = false;
+
+			};
+
+			Object.assign(Dude.prototype, Player.prototype);
+
+			function dudeBehavior(dude) {
+				if (!dude.jumping && controller.up) {
+
+					controller.up = false;
+					dude.vy -= 12;
+					dude.jumping = true;
+
+				}
+
+				if (controller.left) dude.vx -= 0.75;
+				if (controller.right) dude.vx += 0.75;
+
+				var airborne = true;
+
+				dude.vy += gravity;
+
+				dude.oy = dude.y;
+				dude.ox = dude.x;
+				dude.y += dude.vy;
+				dude.x += dude.vx;
+				if(dude.x>240){
+					airborne = false;
+					dude.x = 240;
+					dude.vx = 0;
+					dude.jumping = false;
+					dude.vy -= dude.vy * friction;
+				}
+				if(dude.x<30){
+					airborne = false;
+					dude.x = 30;
+					dude.vx = 0;
+					dude.jumping = false;
+					dude.vy -= dude.vy * friction;
+				}
+				if (dude.y > floor ) {
+					airborne = false;
+					dude.y = floor;
+					dude.vy =0;
+					dude.jumping =false;
+					dude.vx -= dude.vx * friction;
+
+				}
+				if(k1==1){
+					v=i;
+					if(v<10){
+						for(var z=0;z<3;z++){
+						platforms.pop();
+					    }
+						var t=Math.floor(Math.random() * 3);
+						platform1 = new platform(30+d[t],50,2, platformBehaviorattack);
+					    platform2 = new platform(50+d[t],50,3, platformBehaviorattack);
+					    platform3 = new platform(70+d[t],50,4, platformBehaviorattack);
+						platforms.push(platform3);
+					    platforms.push(platform2);
+					    platforms.push(platform1);
+					    k1=0;
+						i+=1;
+					}
+					else{
+						for(var z=0;z<3;z++){
+						platforms.pop();
+						}
+						platform1 = new platform(30+d[0],50,2, platformBehaviorattack2);
+					    platform2 = new platform(50+d[0],50,3, platformBehaviorattack2);
+					    platform3 = new platform(70+d[0],50,4, platformBehaviorattack2);
+					    platform4 = new platform(30+d[1],50,2, platformBehaviorattack2);
+					    platform5 = new platform(50+d[1],50,3, platformBehaviorattack2);
+					    platform6 = new platform(70+d[1],50,4, platformBehaviorattack2);
+					    platform7 = new platform(30+d[2],50,2, platformBehaviorattack2);
+					    platform8 = new platform(50+d[2],50,3, platformBehaviorattack2);
+					    platform9 = new platform(70+d[2],50,4, platformBehaviorattack2);
+					    platforms.push(platform1);
+					    platforms.push(platform2);
+					    platforms.push(platform3);
+					    platforms.push(platform4);
+					    platforms.push(platform5);
+					    platforms.push(platform6);
+						platforms.pop();
+						platforms.pop();
+						platforms.pop();
+					    platforms.push(platform7);
+					    platforms.push(platform8);
+					    platforms.push(platform9);
+						k1=0;
+						i=0;
+					}
+				}
+				if(k1==2){
+					if(i<4){
+					var t=Math.floor(Math.random() * 2);
+					while(platforms.length>1){
+							platforms.pop();
+						}
+					platform1 = new platform(30+d[0],50,2, platformBehaviorattack2);
+					platform2 = new platform(50+d[0],50,3, platformBehaviorattack2);
+					platform3 = new platform(70+d[0],50,4, platformBehaviorattack2);
+					platform4 = new platform(30+d[1],50,2, platformBehaviorattack2);
+					platform5 = new platform(50+d[1],50,3, platformBehaviorattack2);
+					platform6 = new platform(70+d[1],50,4, platformBehaviorattack2);
+					platform7 = new platform(30+d[2],50,2, platformBehaviorattack2);
+					platform8 = new platform(50+d[2],50,3, platformBehaviorattack2);
+					platform9 = new platform(70+d[2],50,4, platformBehaviorattack2);
+					platforms.push(platform1);
+					platforms.push(platform2);
+					platforms.push(platform3);
+					if(t==0){
+						platforms.pop();
+						platforms.pop();
+						platforms.pop();
+					}
+					platforms.push(platform4);
+					platforms.push(platform5);
+					platforms.push(platform6);
+					if(t==1){
+						platforms.pop();
+						platforms.pop();
+						platforms.pop();
+					}
+					platforms.push(platform7);
+					platforms.push(platform8);
+					platforms.push(platform9);
+					if(t==2){
+						platforms.pop();
+						platforms.pop();
+						platforms.pop();
+					}
+					k1=0;
+					}
+					else{
+						while(platforms.length>1){
+							platforms.pop();
+						}
+						platform1  = new platform(400, floor-10, 6, platformBehaviorX);
+						platform2  = new platform(500, floor-30, 6, platformBehaviorX);
+						platform3  = new platform(600, floor-10, 6, platformBehaviorX); 
+						platform4  = new platform(700, floor-30, 6, platformBehaviorX);
+						platform5  = new platform(800, floor-30, 6, platformBehaviorX);
+						platform6  = new platform(900, floor-10, 6, platformBehaviorX);
+						platform7  = new platform(1000,floor-30, 6, platformBehaviorX);
+						platform8  = new platform(1100,floor-10, 6, platformBehaviorX);
+						platform9  = new platform(1200,floor-30, 6, platformBehaviorX); 
+						platform10 = new platform(1300,floor-30, 6, platformBehaviorX);
+						platform11 = new platform(1400,floor-10, 6, platformBehaviorX);
+						platform12 = new platform(1500,floor-30, 6, platformBehaviorX);
+						platform13 = new platform(1600,floor-10, 6, platformBehaviorX);
+						platform14 = new platform(1700,floor-30, 6, platformBehaviorX);
+						platform15 = new platform(1800,floor-10, 6, platformBehaviorX); 
+						platform16 = new platform(1900,floor-30, 6, platformBehaviorX);
+						platform17 = new platform(2000,floor-10, 6, platformBehaviorX);
+						platforms.push(platform1);
+					    platforms.push(platform2);
+					    platforms.push(platform3);
+						platforms.push(platform4);
+					    platforms.push(platform5);
+					    platforms.push(platform6);
+						platforms.push(platform7);
+					    platforms.push(platform8);
+					    platforms.push(platform9);
+						platforms.push(platform10);
+					    platforms.push(platform11);
+					    platforms.push(platform12);
+						platforms.push(platform13);
+					    platforms.push(platform14);
+					    platforms.push(platform15);
+						platforms.push(platform16);
+					    platforms.push(platform17);
+						platform1  = new platform(-2400, floor-10, 5, platformBehaviorXrev);
+					    platform2  = new platform(-2500, floor-30, 5, platformBehaviorXrev);
+					    platform3  = new platform(-2600, floor-10, 5, platformBehaviorXrev); 
+					    platform4  = new platform(-2700, floor-30, 5, platformBehaviorXrev);
+					    platform5  = new platform(-2800, floor-30, 5, platformBehaviorXrev);
+					    platform6  = new platform(-2900, floor-10, 5, platformBehaviorXrev);
+					    platform7  = new platform(-3000,floor-30, 5, platformBehaviorXrev);
+					    platform8  = new platform(-3100,floor-10, 5, platformBehaviorXrev);
+					    platform9  = new platform(-3200,floor-30, 5, platformBehaviorXrev); 
+					    platform10 = new platform(-3300,floor-30, 5, platformBehaviorXrev);
+					    platform11 = new platform(-3400,floor-10, 5, platformBehaviorXrev);
+					    platform12 = new platform(-3500,floor-30, 5, platformBehaviorXrev);
+					    platform13 = new platform(-3600,floor-10, 5, platformBehaviorXrev);
+					    platform14 = new platform(-3700,floor-30, 5, platformBehaviorXrev);
+					    platform15 = new platform(-3800,floor-10, 5, platformBehaviorXrev); 
+					    platform16 = new platform(-3900,floor-30, 5, platformBehaviorXrev);
+					    platform17 = new platform(-4000,floor-10, 5, platformBehaviorXrev);
+						platform18 = new platform(-1000,-200,0,Switch);
+					    platforms.push(platform1);
+					    platforms.push(platform2);
+					    platforms.push(platform3);
+					    platforms.push(platform4);
+					    platforms.push(platform5);
+					    platforms.push(platform6);
+					    platforms.push(platform7);
+					    platforms.push(platform8);
+					    platforms.push(platform9);
+					    platforms.push(platform10);
+					    platforms.push(platform11);
+					    platforms.push(platform12);
+					    platforms.push(platform13);
+					    platforms.push(platform14);
+					    platforms.push(platform15);
+					    platforms.push(platform16);
+					    platforms.push(platform17);
+						platforms.push(platform18);
+					    k1=0;
+						i=0;
+					}
+					i+=1;
+				}
+				if(k1==3){
+					///document.write(i);
+				if(h7==0){
+					if(i<2){
+						//document.write("Sucess");
+						while(platforms.length>1){
+							platforms.pop();
+						}						
+						platform1  = new platform(130+80, 22-200, 9, platformBehaviorattack3);
+						platform2  = new platform(145+80, 22-200,10, platformBehaviorattack3);
+						platform3  = new platform(160+80, 22-200,11, platformBehaviorattack3);
+						platform4  = new platform(130+80, 37-200,12, platformBehaviorattack3);
+						platform5  = new platform(145+80, 37-200,13, platformBehaviorattack3);
+						platform6  = new platform(160+80, 37-200,14, platformBehaviorattack3);
+						platform7  = new platform(130+80, 52-200,15, platformBehaviorattack3);
+						platform8  = new platform(145+80, 52-200,16, platformBehaviorattack3);
+						platform9  = new platform(160+80, 52-200,17, platformBehaviorattack3);
+						platform10 = new platform(130+80, 67-200,18, platformBehaviorattack3);
+						platform11 = new platform(145+80, 67-200,19, platformBehaviorattack3);
+						platform12 = new platform(160+80, 67-200,20, platformBehaviorattack3);
+						platform13 = new platform(130+80, 82-200,21, platformBehaviorattack3);
+						platform14 = new platform(145+80, 82-200,22, platformBehaviorattack3);
+						platform15 = new platform(160+80, 82-200,23, platformBehaviorattack3);
+						platforms.push(platform1);
+					    platforms.push(platform2);
+					    platforms.push(platform3);
+						platforms.push(platform4);
+					    platforms.push(platform5);
+					    platforms.push(platform6);
+						platforms.push(platform7);
+					    platforms.push(platform8);
+					    platforms.push(platform9);
+						platforms.push(platform10);
+					    platforms.push(platform11);
+					    platforms.push(platform12);
+						platforms.push(platform13);
+					    platforms.push(platform14);
+					    platforms.push(platform15);
+					    k1=0;
+						platform1  = new platform(130+30, 22-200, 9, platformBehaviorattack3);
+						platform2  = new platform(145+30, 22-200,10, platformBehaviorattack3);
+						platform3  = new platform(160+30, 22-200,11, platformBehaviorattack3);
+						platform4  = new platform(130+30, 37-200,12, platformBehaviorattack3);
+						platform5  = new platform(145+30, 37-200,13, platformBehaviorattack3);
+						platform6  = new platform(160+30, 37-200,14, platformBehaviorattack3);
+						platform7  = new platform(130+30, 52-200,15, platformBehaviorattack3);
+						platform8  = new platform(145+30, 52-200,16, platformBehaviorattack3);
+						platform9  = new platform(160+30, 52-200,17, platformBehaviorattack3);
+						platform10 = new platform(130+30, 67-200,18, platformBehaviorattack3);
+						platform11 = new platform(145+30, 67-200,19, platformBehaviorattack3);
+						platform12 = new platform(160+30, 67-200,20, platformBehaviorattack3);
+						platform13 = new platform(130+30, 82-200,21, platformBehaviorattack3);
+						platform14 = new platform(145+30, 82-200,22, platformBehaviorattack3);
+						platform15 = new platform(160+30, 82-200,23, platformBehaviorattack3);
+						platforms.push(platform1);
+					    platforms.push(platform2);
+					    platforms.push(platform3);
+						platforms.push(platform4);
+					    platforms.push(platform5);
+					    platforms.push(platform6);
+						platforms.push(platform7);
+					    platforms.push(platform8);
+					    platforms.push(platform9);
+						platforms.push(platform10);
+					    platforms.push(platform11);
+					    platforms.push(platform12);
+						platforms.push(platform13);
+					    platforms.push(platform14);
+					    platforms.push(platform15);
+					    k1=0;
+						platform1  = new platform(130-20, 22-200, 9, platformBehaviorattack3);
+						platform2  = new platform(145-20, 22-200,10, platformBehaviorattack3);
+						platform3  = new platform(160-20, 22-200,11, platformBehaviorattack3);
+						platform4  = new platform(130-20, 37-200,12, platformBehaviorattack3);
+						platform5  = new platform(145-20, 37-200,13, platformBehaviorattack3);
+						platform6  = new platform(160-20, 37-200,14, platformBehaviorattack3);
+						platform7  = new platform(130-20, 52-200,15, platformBehaviorattack3);
+						platform8  = new platform(145-20, 52-200,16, platformBehaviorattack3);
+						platform9  = new platform(160-20, 52-200,17, platformBehaviorattack3);
+						platform10 = new platform(130-20, 67-200,18, platformBehaviorattack3);
+						platform11 = new platform(145-20, 67-200,19, platformBehaviorattack3);
+						platform12 = new platform(160-20, 67-200,20, platformBehaviorattack3);
+						platform13 = new platform(130-20, 82-200,21, platformBehaviorattack3);
+						platform14 = new platform(145-20, 82-200,22, platformBehaviorattack3);
+						platform15 = new platform(160-20, 82-200,23, platformBehaviorattack3);
+						platforms.push(platform1);
+					    platforms.push(platform2);
+					    platforms.push(platform3);
+						platforms.push(platform4);
+					    platforms.push(platform5);
+					    platforms.push(platform6);
+						platforms.push(platform7);
+					    platforms.push(platform8);
+					    platforms.push(platform9);
+						platforms.push(platform10);
+					    platforms.push(platform11);
+					    platforms.push(platform12);
+						platforms.push(platform13);
+					    platforms.push(platform14);
+					    platforms.push(platform15);
+						platform1  = new platform(130-70, 22-200, 9, platformBehaviorattack3);
+						platform2  = new platform(145-70, 22-200,10, platformBehaviorattack3);
+						platform3  = new platform(160-70, 22-200,11, platformBehaviorattack3);
+						platform4  = new platform(130-70, 37-200,12, platformBehaviorattack3);
+						platform5  = new platform(145-70, 37-200,13, platformBehaviorattack3);
+						platform6  = new platform(160-70, 37-200,14, platformBehaviorattack3);
+						platform7  = new platform(130-70, 52-200,15, platformBehaviorattack3);
+						platform8  = new platform(145-70, 52-200,16, platformBehaviorattack3);
+						platform9  = new platform(160-70, 52-200,17, platformBehaviorattack3);
+						platform10 = new platform(130-70, 67-200,18, platformBehaviorattack3);
+						platform11 = new platform(145-70, 67-200,19, platformBehaviorattack3);
+						platform12 = new platform(160-70, 67-200,20, platformBehaviorattack3);
+						platform13 = new platform(130-70, 82-200,21, platformBehaviorattack3);
+						platform14 = new platform(145-70, 82-200,22, platformBehaviorattack3);
+						platform15 = new platform(160-70, 82-200,23, platformBehaviorattack3);
+						platforms.push(platform1);
+					    platforms.push(platform2);
+					    platforms.push(platform3);
+						platforms.push(platform4);
+					    platforms.push(platform5);
+					    platforms.push(platform6);
+						platforms.push(platform7);
+					    platforms.push(platform8);
+					    platforms.push(platform9);
+						platforms.push(platform10);
+					    platforms.push(platform11);
+					    platforms.push(platform12);
+						platforms.push(platform13);
+					    platforms.push(platform14);
+					    platforms.push(platform15);
+					    platform1  = new platform(130-120, 22-200, 9, platformBehaviorattack3);
+						platform2  = new platform(145-120, 22-200,10, platformBehaviorattack3);
+						platform3  = new platform(160-120, 22-200,11, platformBehaviorattack3);
+						platform4  = new platform(130-120, 37-200,12, platformBehaviorattack3);
+						platform5  = new platform(145-120, 37-200,13, platformBehaviorattack3);
+						platform6  = new platform(160-120, 37-200,14, platformBehaviorattack3);
+						platform7  = new platform(130-120, 52-200,15, platformBehaviorattack3);
+						platform8  = new platform(145-120, 52-200,16, platformBehaviorattack3);
+						platform9  = new platform(160-120, 52-200,17, platformBehaviorattack3);
+						platform10 = new platform(130-120, 67-200,18, platformBehaviorattack3);
+						platform11 = new platform(145-120, 67-200,19, platformBehaviorattack3);
+						platform12 = new platform(160-120, 67-200,20, platformBehaviorattack3);
+						platform13 = new platform(130-120, 82-200,21, platformBehaviorattack3);
+						platform14 = new platform(145-120, 82-200,22, platformBehaviorattack3);
+						platform15 = new platform(160-120, 82-200,23, platformBehaviorattack3);
+						platforms.push(platform1);
+					    platforms.push(platform2);
+					    platforms.push(platform3);
+						platforms.push(platform4);
+					    platforms.push(platform5);
+					    platforms.push(platform6);
+						platforms.push(platform7);
+					    platforms.push(platform8);
+					    platforms.push(platform9);
+						platforms.push(platform10);
+					    platforms.push(platform11);
+					    platforms.push(platform12);
+						platforms.push(platform13);
+					    platforms.push(platform14);
+					    platforms.push(platform15);
+						platform1 = new platform(130, 22,0,platformBehaviorFollow);
+						platforms.push(platform1);
+					    k1=0;
+					}
+					else{
+						while(platforms.length>1){
+							platforms.pop();
+						}
+						platform1  = new platform(130+80,floor-87, 9, platformBehaviorattack4);
+						platform2  = new platform(145+80,floor-87,10, platformBehaviorattack4);
+						platform3  = new platform(160+80,floor-87,11, platformBehaviorattack4);
+						platform4  = new platform(130+80,floor-87+15,12, platformBehaviorattack4);
+						platform5  = new platform(145+80,floor-87+15,13, platformBehaviorattack4);
+						platform6  = new platform(160+80,floor-87+15,14, platformBehaviorattack4);
+						platform7  = new platform(130+80,floor-87+30,15, platformBehaviorattack4);
+						platform8  = new platform(145+80,floor-87+30,16, platformBehaviorattack4);
+						platform9  = new platform(160+80,floor-87+30,17, platformBehaviorattack4);
+						platform10 = new platform(130+80,floor-87+45,18, platformBehaviorattack4);
+						platform11 = new platform(145+80,floor-87+45,19, platformBehaviorattack4);
+						platform12 = new platform(160+80,floor-87+45,20, platformBehaviorattack4);
+						platform13 = new platform(130+80,floor-87+60,21, platformBehaviorattack4);
+						platform14 = new platform(145+80,floor-87+60,22, platformBehaviorattack4);
+						platform15 = new platform(160+80,floor-87+60,23, platformBehaviorattack4);
+						platforms.push(platform1);
+					    platforms.push(platform2);
+					    platforms.push(platform3);
+						platforms.push(platform4);
+					    platforms.push(platform5);
+					    platforms.push(platform6);
+						platforms.push(platform7);
+					    platforms.push(platform8);
+					    platforms.push(platform9);
+						platforms.push(platform10);
+					    platforms.push(platform11);
+					    platforms.push(platform12);
+						platforms.push(platform13);
+					    platforms.push(platform14);
+					    platforms.push(platform15);
+					    k1=0;
+						platform1  = new platform(130+30,floor-87, 9, platformBehaviorattack4);
+						platform2  = new platform(145+30,floor-87,10, platformBehaviorattack4);
+						platform3  = new platform(160+30,floor-87,11, platformBehaviorattack4);
+						platform4  = new platform(130+30,floor-87+15,12, platformBehaviorattack4);
+						platform5  = new platform(145+30,floor-87+15,13, platformBehaviorattack4);
+						platform6  = new platform(160+30,floor-87+15,14, platformBehaviorattack4);
+						platform7  = new platform(130+30,floor-87+30,15, platformBehaviorattack4);
+						platform8  = new platform(145+30,floor-87+30,16, platformBehaviorattack4);
+						platform9  = new platform(160+30,floor-87+30,17, platformBehaviorattack4);
+						platform10 = new platform(130+30,floor-87+45,18, platformBehaviorattack4);
+						platform11 = new platform(145+30,floor-87+45,19, platformBehaviorattack4);
+						platform12 = new platform(160+30,floor-87+45,20, platformBehaviorattack4);
+						platform13 = new platform(130+30,floor-87+60,21, platformBehaviorattack4);
+						platform14 = new platform(145+30,floor-87+60,22, platformBehaviorattack4);
+						platform15 = new platform(160+30,floor-87+60,23, platformBehaviorattack4);
+						platforms.push(platform1);
+					    platforms.push(platform2);
+					    platforms.push(platform3);
+						platforms.push(platform4);
+					    platforms.push(platform5);
+					    platforms.push(platform6);
+						platforms.push(platform7);
+					    platforms.push(platform8);
+					    platforms.push(platform9);
+						platforms.push(platform10);
+					    platforms.push(platform11);
+					    platforms.push(platform12);
+						platforms.push(platform13);
+					    platforms.push(platform14);
+					    platforms.push(platform15);
+					    k1=0;
+						platform1  = new platform(130-20,floor-87, 9, platformBehaviorattack4);
+						platform2  = new platform(145-20,floor-87,10, platformBehaviorattack4);
+						platform3  = new platform(160-20,floor-87,11, platformBehaviorattack4);
+						platform4  = new platform(130-20,floor-87+15,12, platformBehaviorattack4);
+						platform5  = new platform(145-20,floor-87+15,13, platformBehaviorattack4);
+						platform6  = new platform(160-20,floor-87+15,14, platformBehaviorattack4);
+						platform7  = new platform(130-20,floor-87+30,15, platformBehaviorattack4);
+						platform8  = new platform(145-20,floor-87+30,16, platformBehaviorattack4);
+						platform9  = new platform(160-20,floor-87+30,17, platformBehaviorattack4);
+						platform10 = new platform(130-20,floor-87+45,18, platformBehaviorattack4);
+						platform11 = new platform(145-20,floor-87+45,19, platformBehaviorattack4);
+						platform12 = new platform(160-20,floor-87+45,20, platformBehaviorattack4);
+						platform13 = new platform(130-20,floor-87+60,21, platformBehaviorattack4);
+						platform14 = new platform(145-20,floor-87+60,22, platformBehaviorattack4);
+						platform15 = new platform(160-20,floor-87+60,23, platformBehaviorattack4);
+						platforms.push(platform1);
+					    platforms.push(platform2);
+					    platforms.push(platform3);
+						platforms.push(platform4);
+					    platforms.push(platform5);
+					    platforms.push(platform6);
+						platforms.push(platform7);
+					    platforms.push(platform8);
+					    platforms.push(platform9);
+						platforms.push(platform10);
+					    platforms.push(platform11);
+					    platforms.push(platform12);
+						platforms.push(platform13);
+					    platforms.push(platform14);
+					    platforms.push(platform15);
+						platform1  = new platform(130-70,floor-87, 9, platformBehaviorattack4);
+						platform2  = new platform(145-70,floor-87,10, platformBehaviorattack4);
+						platform3  = new platform(160-70,floor-87,11, platformBehaviorattack4);
+						platform4  = new platform(130-70,floor-87+15,12, platformBehaviorattack4);
+						platform5  = new platform(145-70,floor-87+15,13, platformBehaviorattack4);
+						platform6  = new platform(160-70,floor-87+15,14, platformBehaviorattack4);
+						platform7  = new platform(130-70,floor-87+30,15, platformBehaviorattack4);
+						platform8  = new platform(145-70,floor-87+30,16, platformBehaviorattack4);
+						platform9  = new platform(160-70,floor-87+30,17, platformBehaviorattack4);
+						platform10 = new platform(130-70,floor-87+45,18, platformBehaviorattack4);
+						platform11 = new platform(145-70,floor-87+45,19, platformBehaviorattack4);
+						platform12 = new platform(160-70,floor-87+45,20, platformBehaviorattack4);
+						platform13 = new platform(130-70,floor-87+60,21, platformBehaviorattack4);
+						platform14 = new platform(145-70,floor-87+60,22, platformBehaviorattack4);
+						platform15 = new platform(160-70,floor-87+60,23, platformBehaviorattack4);
+						platforms.push(platform1);
+					    platforms.push(platform2);
+					    platforms.push(platform3);
+						platforms.push(platform4);
+					    platforms.push(platform5);
+					    platforms.push(platform6);
+						platforms.push(platform7);
+					    platforms.push(platform8);
+					    platforms.push(platform9);
+						platforms.push(platform10);
+					    platforms.push(platform11);
+					    platforms.push(platform12);
+						platforms.push(platform13);
+					    platforms.push(platform14);
+					    platforms.push(platform15);
+					    platform1  = new platform(130-120,floor-87, 9, platformBehaviorattack4);
+						platform2  = new platform(145-120,floor-87,10, platformBehaviorattack4);
+						platform3  = new platform(160-120,floor-87,11, platformBehaviorattack4);
+						platform4  = new platform(130-120,floor-87+15,12, platformBehaviorattack4);
+						platform5  = new platform(145-120,floor-87+15,13, platformBehaviorattack4);
+						platform6  = new platform(160-120,floor-87+15,14, platformBehaviorattack4);
+						platform7  = new platform(130-120,floor-87+30,15, platformBehaviorattack4);
+						platform8  = new platform(145-120,floor-87+30,16, platformBehaviorattack4);
+						platform9  = new platform(160-120,floor-87+30,17, platformBehaviorattack4);
+						platform10 = new platform(130-120,floor-87+45,18, platformBehaviorattack4);
+						platform11 = new platform(145-120,floor-87+45,19, platformBehaviorattack4);
+						platform12 = new platform(160-120,floor-87+45,20, platformBehaviorattack4);
+						platform13 = new platform(130-120,floor-87+60,21, platformBehaviorattack4);
+						platform14 = new platform(145-120,floor-87+60,22, platformBehaviorattack4);
+						platform15 = new platform(160-120,floor-87+60,23, platformBehaviorattack4);
+						platforms.push(platform1);
+					    platforms.push(platform2);
+					    platforms.push(platform3);
+						platforms.push(platform4);
+					    platforms.push(platform5);
+					    platforms.push(platform6);
+						platforms.push(platform7);
+					    platforms.push(platform8);
+					    platforms.push(platform9);
+						platforms.push(platform10);
+					    platforms.push(platform11);
+					    platforms.push(platform12);
+						platforms.push(platform13);
+					    platforms.push(platform14);
+					    platforms.push(platform15);						
+						platform1 = new platform(130, 22,0,platformBehaviorFollow);
+						platforms.push(platform1);
+					    k1=0;
+						i=-1;
+					}
+					i+=1;
+				}
+				else{
+					while(platforms.length>1){
+                        platforms.pop();
+                    }						
+                    platform1  = new platform(130+80, 22-200, 9, platformBehaviorattack5);
+                    platform2  = new platform(145+80, 22-200,10, platformBehaviorattack5);
+                    platform3  = new platform(160+80, 22-200,11, platformBehaviorattack5);
+                    platform4  = new platform(130+80, 37-200,12, platformBehaviorattack5);
+                    platform5  = new platform(145+80, 37-200,13, platformBehaviorattack5);
+                    platform6  = new platform(160+80, 37-200,14, platformBehaviorattack5);
+                    platform7  = new platform(130+80, 52-200,15, platformBehaviorattack5);
+                    platform8  = new platform(145+80, 52-200,16, platformBehaviorattack5);
+                    platform9  = new platform(160+80, 52-200,17, platformBehaviorattack5);
+                    platform10 = new platform(130+80, 67-200,18, platformBehaviorattack5);
+                    platform11 = new platform(145+80, 67-200,19, platformBehaviorattack5);
+                    platform12 = new platform(160+80, 67-200,20, platformBehaviorattack5);
+                    platform13 = new platform(130+80, 82-200,21, platformBehaviorattack5);
+                    platform14 = new platform(145+80, 82-200,22, platformBehaviorattack5);
+                    platform15 = new platform(160+80, 82-200,23, platformBehaviorattack5);
+                    platforms.push(platform1);
+                    platforms.push(platform2);
+                    platforms.push(platform3);
+                    platforms.push(platform4);
+                    platforms.push(platform5);
+                    platforms.push(platform6);
+                    platforms.push(platform7);
+                    platforms.push(platform8);
+                    platforms.push(platform9);
+                    platforms.push(platform10);
+                    platforms.push(platform11);
+                    platforms.push(platform12);
+                    platforms.push(platform13);
+                    platforms.push(platform14);
+                    platforms.push(platform15);
+                    k1=0;
+                    platform1  = new platform(130+30, 22-200, 9, platformBehaviorattack5);
+                    platform2  = new platform(145+30, 22-200,10, platformBehaviorattack5);
+                    platform3  = new platform(160+30, 22-200,11, platformBehaviorattack5);
+                    platform4  = new platform(130+30, 37-200,12, platformBehaviorattack5);
+                    platform5  = new platform(145+30, 37-200,13, platformBehaviorattack5);
+                    platform6  = new platform(160+30, 37-200,14, platformBehaviorattack5);
+                    platform7  = new platform(130+30, 52-200,15, platformBehaviorattack5);
+                    platform8  = new platform(145+30, 52-200,16, platformBehaviorattack5);
+                    platform9  = new platform(160+30, 52-200,17, platformBehaviorattack5);
+                    platform10 = new platform(130+30, 67-200,18, platformBehaviorattack5);
+                    platform11 = new platform(145+30, 67-200,19, platformBehaviorattack5);
+                    platform12 = new platform(160+30, 67-200,20, platformBehaviorattack5);
+                    platform13 = new platform(130+30, 82-200,21, platformBehaviorattack5);
+                    platform14 = new platform(145+30, 82-200,22, platformBehaviorattack5);
+                    platform15 = new platform(160+30, 82-200,23, platformBehaviorattack5);
+                    platforms.push(platform1);
+                    platforms.push(platform2);
+                    platforms.push(platform3);
+                    platforms.push(platform4);
+                    platforms.push(platform5);
+                    platforms.push(platform6);
+                    platforms.push(platform7);
+                    platforms.push(platform8);
+                    platforms.push(platform9);
+                    platforms.push(platform10);
+                    platforms.push(platform11);
+                    platforms.push(platform12);
+                    platforms.push(platform13);
+                    platforms.push(platform14);
+                    platforms.push(platform15);
+                    k1=0;
+                    platform1  = new platform(130-20, 22-200, 9, platformBehaviorattack5);
+                    platform2  = new platform(145-20, 22-200,10, platformBehaviorattack5);
+                    platform3  = new platform(160-20, 22-200,11, platformBehaviorattack5);
+                    platform4  = new platform(130-20, 37-200,12, platformBehaviorattack5);
+                    platform5  = new platform(145-20, 37-200,13, platformBehaviorattack5);
+                    platform6  = new platform(160-20, 37-200,14, platformBehaviorattack5);
+                    platform7  = new platform(130-20, 52-200,15, platformBehaviorattack5);
+                    platform8  = new platform(145-20, 52-200,16, platformBehaviorattack5);
+                    platform9  = new platform(160-20, 52-200,17, platformBehaviorattack5);
+                    platform10 = new platform(130-20, 67-200,18, platformBehaviorattack5);
+                    platform11 = new platform(145-20, 67-200,19, platformBehaviorattack5);
+                    platform12 = new platform(160-20, 67-200,20, platformBehaviorattack5);
+                    platform13 = new platform(130-20, 82-200,21, platformBehaviorattack5);
+                    platform14 = new platform(145-20, 82-200,22, platformBehaviorattack5);
+                    platform15 = new platform(160-20, 82-200,23, platformBehaviorattack5);
+                    platforms.push(platform1);
+                    platforms.push(platform2);
+                    platforms.push(platform3);
+                    platforms.push(platform4);
+                    platforms.push(platform5);
+                    platforms.push(platform6);
+                    platforms.push(platform7);
+                    platforms.push(platform8);
+                    platforms.push(platform9);
+                    platforms.push(platform10);
+                    platforms.push(platform11);
+                    platforms.push(platform12);
+                    platforms.push(platform13);
+                    platforms.push(platform14);
+                    platforms.push(platform15);
+                    platform1  = new platform(130-70, 22-200, 9, platformBehaviorattack5);
+                    platform2  = new platform(145-70, 22-200,10, platformBehaviorattack5);
+                    platform3  = new platform(160-70, 22-200,11, platformBehaviorattack5);
+                    platform4  = new platform(130-70, 37-200,12, platformBehaviorattack5);
+                    platform5  = new platform(145-70, 37-200,13, platformBehaviorattack5);
+                    platform6  = new platform(160-70, 37-200,14, platformBehaviorattack5);
+                    platform7  = new platform(130-70, 52-200,15, platformBehaviorattack5);
+                    platform8  = new platform(145-70, 52-200,16, platformBehaviorattack5);
+                    platform9  = new platform(160-70, 52-200,17, platformBehaviorattack5);
+                    platform10 = new platform(130-70, 67-200,18, platformBehaviorattack5);
+                    platform11 = new platform(145-70, 67-200,19, platformBehaviorattack5);
+                    platform12 = new platform(160-70, 67-200,20, platformBehaviorattack5);
+                    platform13 = new platform(130-70, 82-200,21, platformBehaviorattack5);
+                    platform14 = new platform(145-70, 82-200,22, platformBehaviorattack5);
+                    platform15 = new platform(160-70, 82-200,23, platformBehaviorattack5);
+                    platforms.push(platform1);
+                    platforms.push(platform2);
+                    platforms.push(platform3);
+                    platforms.push(platform4);
+                    platforms.push(platform5);
+                    platforms.push(platform6);
+                    platforms.push(platform7);
+                    platforms.push(platform8);
+                    platforms.push(platform9);
+                    platforms.push(platform10);
+                    platforms.push(platform11);
+                    platforms.push(platform12);
+                    platforms.push(platform13);
+                    platforms.push(platform14);
+                    platforms.push(platform15);
+                    platform1  = new platform(130-120, 22-200, 9, platformBehaviorattack5);
+                    platform2  = new platform(145-120, 22-200,10, platformBehaviorattack5);
+                    platform3  = new platform(160-120, 22-200,11, platformBehaviorattack5);
+                    platform4  = new platform(130-120, 37-200,12, platformBehaviorattack5);
+                    platform5  = new platform(145-120, 37-200,13, platformBehaviorattack5);
+                    platform6  = new platform(160-120, 37-200,14, platformBehaviorattack5);
+                    platform7  = new platform(130-120, 52-200,15, platformBehaviorattack5);
+                    platform8  = new platform(145-120, 52-200,16, platformBehaviorattack5);
+                    platform9  = new platform(160-120, 52-200,17, platformBehaviorattack5);
+                    platform10 = new platform(130-120, 67-200,18, platformBehaviorattack5);
+                    platform11 = new platform(145-120, 67-200,19, platformBehaviorattack5);
+                    platform12 = new platform(160-120, 67-200,20, platformBehaviorattack5);
+                    platform13 = new platform(130-120, 82-200,21, platformBehaviorattack5);
+                    platform14 = new platform(145-120, 82-200,22, platformBehaviorattack5);
+                    platform15 = new platform(160-120, 82-200,23, platformBehaviorattack5);
+                    platforms.push(platform1);
+                    platforms.push(platform2);
+                    platforms.push(platform3);
+                    platforms.push(platform4);
+                    platforms.push(platform5);
+                    platforms.push(platform6);
+                    platforms.push(platform7);
+                    platforms.push(platform8);
+                    platforms.push(platform9);
+                    platforms.push(platform10);
+                    platforms.push(platform11);
+                    platforms.push(platform12);
+                    platforms.push(platform13);
+                    platforms.push(platform14);
+                    platforms.push(platform15);
+					b=0;h1=0;h2=0;h3=0;h4=0;h5=0;h6=0;h7=0;h8=0;h9=0;h10=0;
+                    k1=0;
+				}
+				}
+				if(k1==4){
+					//document.write("==>");
+					//document.write(i);
+					//document.write("<==");	
+					if(i<1){
+					while(platforms.length>1){
+							platforms.pop();
+					}
+					platform1  = new platform(-100,0, 0,Switch2);
+					platforms.push(platform1);
+					switch(k2){
+						case 0: h=192;b=0;h1=0;h2=0;h3=0;h4=0;h5=0;h6=0;h7=0;h8=0;h9=0;h10=0;break;
+						case 1: h=192+16;b=0;h1=0;h2=0;h3=0;h4=0;h5=0;h6=0;h7=0;h8=0;h9=0;h10=0;break;
+						case 2: h=192+16*2;b=0;h1=0;h2=0;h3=0;h4=0;h5=0;h6=0;h7=0;h8=0;h9=0;h10=0;break;
+						case 3: h=192+16*3;b=0;h1=0;h2=0;h3=0;h4=0;h5=0;h6=0;h7=0;h8=0;h9=0;h10=0;break;
+						case 4: h=192+16*4;b=0;h1=0;h2=0;h3=0;h4=0;h5=0;h6=0;h7=0;h8=0;h9=0;h10=0;break;
+					}
+					if(k2>3){
+						window.location.replace("../congrats/congrats.html");
+					}
+					map=[16+h,17+h,18+h,19+h,20+h,21+h,22+h,23+h,24+h,25+h,26+h,27+h,28+h,29+h,30+h,31+h,
+					     32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,
+					     48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,
+					     64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,
+					     80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,
+					     96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,
+					     112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,
+					     128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,
+					     144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,
+					     160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,
+					     176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,
+					     200,200,200,200,200,200,207-h10,207-h9,207-h8,207-h7,207-h6,207-h5,207-h4,207-h3,207-h2,207-h1];
+					k2+=1;
+					//document.write(k2);
+					
+					//document.write(map);
+					//document.write(h);
+					k1=0;
+					}
+					else{
+					//document.write(h);
+					    r+=0.1;
+						while(platforms.length>0){
+							platforms.pop();
+						}
+						platform1 = new platform(130, 22,1, platformBehaviorY);
+						platforms.push(platform1);
+						platform1 = new platform(-25,50,2, platformBehaviorattack);
+						platforms.push(platform1);
+						platform1 = new platform(-45,50,3, platformBehaviorattack);
+						platforms.push(platform1);
+						platform1 = new platform(-65,50,4, platformBehaviorattack);
+						platforms.push(platform1);
+						k1=0;
+					}
+					i+=1;
+				}
+				for (let index = platforms.length - 1; index > -1; -- index) {
+
+					let platform = platforms[index];
+
+					if((dude.x + tile_size * 0.5 > platform.left && dude.x + tile_size * 0.5 < platform.right)) {
+
+						if ((dude.y > platform.floor-2*tile_size && dude.oy<= platform.oldFloor+tile_size)) {
+							j+=1;
+							if(j>8){
+								b+=1;
+								j=1;
+							}		
+							switch(b){
+								case 1:
+								h1=7;								
+								break;
+								case 2:
+								h2=7;								
+								break;
+								case 3:
+								h3=7;
+								break;
+								case 4:
+								h4=7;
+								break;
+								case 5:
+								h5=7;
+								break;
+								case 6:
+								h6=7;
+								break;
+								case 7:
+								h7=7;
+								break;
+								case 8:
+								h8=7;
+								break;
+								case 9:
+								h9=7;
+								break;
+								case 10:
+								h10=7;
+								setTimeout(function(){ window.location.href= 'part1.html';}, 2000);
+								dude.y=-1000;
+								break;
+							}
+							map=[16+h,17+h,18+h,19+h,20+h,21+h,22+h,23+h,24+h,25+h,26+h,27+h,28+h,29+h,30+h,31+h,
+					             32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,
+					             48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,
+					             64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,
+					             80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,
+					             96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,
+					             112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,
+					             128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,
+					             144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,
+					             160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,
+					             176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,
+					             200,200,200,200,200,200,207-h10,207-h9,207-h8,207-h7,207-h6,207-h5,207-h4,207-h3,207-h2,207-h1];
+				        }			
+					}
+				}
+				if (dude.jumping || airborne) {
+
+					dude.vx -= dude.vx * friction;
+
+				}
+
+
+			}
+
+			const platform = function(x, y,s, behavior) {
+				switch(s){
+				case 0:
+					s_x=160;
+					s_y=46;
+					s_w=42;
+					break;
+				case 1:
+					s_x=0;
+					s_y=16;
+					s_w=16;
+					break;
+				case 2:
+					s_x=16;
+					s_y=16;
+					s_w=16;
+					break;
+				case 3:
+					s_x=32;
+					s_y=16;
+					s_w=16;
+					break;
+				case 4:
+					s_x=48;
+					s_y=16;
+					s_w=32;
+					break;
+				case 5:
+					s_x=64;
+					s_y=48;
+					s_w=48;
+					break;
+				case 6:
+					s_x=112;
+					s_y=48;
+					s_w=45;
+					break;
+				case 7:
+					s_x=208;
+					s_y=16;
+					s_w=16;
+					break;
+				case 8:
+					s_x=224;
+					s_y=16;
+					s_w=16;
+					break;
+				case 9:
+					s_x=4608;
+					s_y=16;
+					s_w=16;
+					break;
+				case 10:
+					s_x=4624;
+					s_y=16;
+					s_w=16;
+					break;
+				case 11:
+					s_x=4640;
+					s_y=16;
+					s_w=16;
+					break;
+				case 12:
+					s_x=4656;
+					s_y=16;
+					s_w=16;
+					break;
+				case 13:
+					s_x=4672;
+					s_y=16;
+					s_w=16;
+					break;
+				case 14:
+					s_x=4688;
+					s_y=16;
+					s_w=16;
+					break;
+				case 15:
+					s_x=4704;
+					s_y=16;
+					s_w=16;
+					break;
+				case 16:
+					s_x=4720;
+					s_y=16;
+					s_w=16;
+					break;
+				case 17:
+					s_x=4736;
+					s_y=16;
+					s_w=16;
+					break;
+				case 18:
+					s_x=4752;
+					s_y=16;
+					s_w=16;
+					break;
+				case 19:
+					s_x=4768;
+					s_y=16;
+					s_w=16;
+					break;
+				case 20:
+					s_x=4784;
+					s_y=16;
+					s_w=16;
+					break;
+				case 21:
+					s_x=4800;
+					s_y=16;
+					s_w=16;
+					break;
+				case 22:
+					s_x=4816;
+					s_y=16;
+					s_w=16;
+					break;
+				case 23:
+					s_x=4832;
+					s_y=16;
+					s_w=16;
+					break;
+				}
+				Player.call(this, x, y, s_x, s_y, behavior);
+				this.anchor_x = x;
+				this.anchor_y = y;
+				this.d =0;
+				this.w =s_w;
+
+			}
+
+			platform.prototype = {
+
+				get floor() { return this.y + 4; },
+
+				get oldFloor() { return this.oy + 4; },
+
+				get left() { return this.x + 3 ; },
+				get right() { return this.x + 9 + this.w; }
+
+			};
+			Object.assign(platform.prototype, Player.prototype);
+
+			function platformBehaviorX(platform) {
+            
+            platform.d += 0.08;
+            platform.ox = platform.x;
+            platform.vx = platform.anchor_x - platform.d *40 *r- platform.x;
+            platform.x += platform.vx;
+            
+            }
+			function Switch2(platform) {
+            if(platform.y<=floor){
+				platform.d += 0.2;
+                platform.oy = platform.y;                 
+			}
+			else{
+				k1=4;
+			}
+            platform.vy = platform.anchor_y + platform.d*10  - platform.y;
+            platform.y += platform.vy;
+            }
+			function Switch(platform) {
+            if(platform.y<=floor){
+				platform.d += 0.2;
+                platform.oy = platform.y;                 
+			}
+			else{
+				k1=3;
+			}
+            platform.vy = platform.anchor_y + platform.d *1.2 - platform.y;
+            platform.y += platform.vy;
+            }
+			function platformBehaviorXrep(platform) {
+				if(platfoem.x<=200){
+					platform.d += 0.08;
+                    platform.ox = platform.x;
+					k1=2;
+				}
+				else{
+					k1=3;
+				}
+                platform.vx = platform.anchor_x + platform.d*40 - platform.x;
+                platform.x += platform.vx;
+            }
+			function platformBehaviorXrev(platform) {
+            
+                platform.d += 0.08;
+                platform.ox = platform.x;
+                platform.vx = platform.anchor_x + platform.d*40*r - platform.x;
+                platform.x += platform.vx;
+            
+            }
+			function platformBehaviorFollow(platform) {
+				platform.x=dude.x-15;
+				platform.y=dude.y-20;
+		    }
+			function platformBehaviorFixe(platform) {
+
+			}
+			function platformBehaviorY(platform) {
+
+				platform.d += 0.08;
+				platform.oy = platform.y;
+				platform.vy = platform.anchor_y + Math.sin(platform.d) * 5 - platform.y;
+				platform.y += platform.vy;
+
+			}
+			function platformBehaviorattack5(platform){
+			if(platform.y<floor){
+				platform.d += 0.08;
+                platform.oy = platform.y;                 
+			}
+			else{
+				k1=4;
+			}
+            platform.vy = platform.anchor_y + platform.d * 30 - platform.y;
+            platform.y += platform.vy;
+			}
+			function platformBehaviorattack4(platform){
+			platform.d += 0.08;
+            platform.oy = platform.y;
+			if(platform.y<0){				
+				k1=4;
+			}                
+            platform.vy = platform.anchor_y - platform.d * 15 - platform.y;
+            platform.y += platform.vy;
+			}
+			function platformBehaviorattack3(platform){
+			if(platform.y<(floor-35)){
+				platform.d += 0.08;
+                platform.oy = platform.y;                 
+			}
+			else{
+				k1=3;
+			}
+            platform.vy = platform.anchor_y + platform.d * 30 - platform.y;
+            platform.y += platform.vy;
+			}
+			function platformBehaviorattack2(platform) {
+            if(platform.y<=floor){
+				platform.d += 0.2;
+                platform.oy = platform.y;                 
+			}
+			else{
+				k1=2;
+			}
+            platform.vy = platform.anchor_y + platform.d * 15 *r- platform.y;
+            platform.y += platform.vy;
+            }
+			function platformBehaviorattack(platform) {
+            if(platform.y<=floor){
+				platform.d += 0.2;
+                platform.oy = platform.y;                 
+			}
+			else{
+				k1=1;
+			}
+            platform.vy = platform.anchor_y + platform.d * 15*r - platform.y;
+            platform.y += platform.vy;
+            }
+			function platformBehaviorbigattack(platform) {
+            if(platform.y<=floor){
+				platform.d += 0.2;
+                platform.oy = platform.y;                 
+			}
+            platform.vy = platform.anchor_y + platform.d * 10 - platform.y;
+            platform.y += platform.vy;
+            }
+			function platformBehaviorXY(platform) {
+
+				platform.d += 0.08;
+				platform.ox = platform.x;
+				platform.vx = platform.anchor_x + Math.cos(platform.d) * 30 - platform.x;
+				platform.x += platform.vx;
+				platform.oy = platform.y;
+				platform.vy = platform.anchor_y + Math.sin(platform.d) * 30 - platform.y;
+				platform.y += platform.vy;
+
+			}
+			var tile_set = new Image();
+			var tile_size = 16;
+			var map_columns = 16;
+			var map_rows = 12;
+			var map_ratio = map_columns / map_rows;
+			var map_scale = 1;
+			var map=[16+h,17+h,18+h,19+h,20+h,21+h,22+h,23+h,24+h,25+h,26+h,27+h,28+h,29+h,30+h,31+h,
+					 32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,
+					 48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,
+					 64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,
+					 80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,
+					 96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,
+					 112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,
+					 128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,
+					 144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,
+					 160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,
+					 176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,
+					 200,200,200,200,200,200,207,207,207,207,207,207,207,207,207,207];
+			var floor = 160;
+			var friction = 0.3;
+			var gravity = 1;
+
+			var context = document.querySelector("canvas").getContext("2d");
+			var buffer = document.createElement("canvas").getContext("2d");
+
+			var screen_h = document.documentElement.clientHeight - 16;
+			var screen_w = document.documentElement.clientWidth - 16;
+
+			var controller = new Controller();
+			var platforms = [new platform(130, 22,1, platformBehaviorY),new platform(-25,50,2, platformBehaviorattack),new platform(-45,50,3, platformBehaviorattack),new platform(-65,50,4, platformBehaviorattack)];
+
+			var dude = new Dude(146,146, dudeBehavior);
+
+			function loop(time_step) {
+
+				window.requestAnimationFrame(loop);
+
+				screen_h = document.documentElement.clientHeight - 16;
+				screen_w = document.documentElement.clientWidth - 16;
+
+				if (screen_h / buffer.canvas.height < screen_w / buffer.canvas.width) screen_w = screen_h * map_ratio;
+				else screen_h = screen_w / map_ratio;
+
+				map_scale = screen_h / (map_rows * tile_size);
+
+				context.canvas.height = screen_h;
+				context.canvas.width = screen_w;
+				context.imageSmoothingEnabled = false;
+
+				for (let index = map.length - 1; index > -1; -- index) {
+
+					let value = map[index];
+					let tile_x = (index % map_columns) * tile_size;
+					let tile_y = Math.floor(index / map_columns) * tile_size;
+
+					buffer.drawImage(tile_set, value * tile_size, 0, tile_size, tile_size, tile_x, tile_y, tile_size, tile_size);
+
+				}
+
+				for (let index = platforms.length - 1; index > -1; -- index) {
+
+					let platform = platforms[index];
+
+					platform.behave();
+
+					buffer.drawImage(tile_set, platform.source_x, 0, platform.source_w, tile_size, Math.round(platform.x), Math.round(platform.y), platform.source_w, tile_size);
+
+				}
+
+				dude.behave();
+
+				buffer.drawImage(tile_set, dude.source_x, 0, tile_size, tile_size, Math.round(dude.x), Math.round(dude.y), tile_size, tile_size);
+
+				context.drawImage(buffer.canvas, 0, 0, buffer.canvas.width, buffer.canvas.height, 0, 0, context.canvas.width, context.canvas.height);
+
+			}
+
+			buffer.canvas.height = map_rows * tile_size;
+			buffer.canvas.width = map_columns * tile_size;
+
+			tile_set.addEventListener("load", (event) => { loop(); });
+			tile_set.src = "../Platforms/Boss.png";
+			window.addEventListener("keydown", (event) => { controller.keyDownUp(event); });
+			window.addEventListener("keyup", (event) => { controller.keyDownUp(event); });
+		</script>
+
+	</body>
+
+</html>

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+        <meta name="author" content="HAMZA BENJELLOUN & IMADEDDINE ELAASSALI G.INFO">
+		<title>Level 1</title>
+
+		<style>
+
+			* { margin:0; padding:0; }
+
+			html, body { height:100%; width:100%;background: url("../Background/background.png");}
+
+			body { background-color:currentColor; display:grid; }
+
+			canvas { align-self:center; justify-self:center; }
+			audio{
+				display:none;
+			}
+
+		</style>
+
+	</head>
+
+	<body>
+
+		<canvas></canvas>
+		<audio id="player" controls loop>
+			<source src="../Music/musicPart1.mp3" type="audio/mp3">
+		</audio>
+		
+		<audio id="jump" controls autoplay>
+			<source src="../Music/jump.mp3" type="audio/mp3">
+		</audio>
+		<audio id="move" controls autoplay>
+			<source src="../Music/walk.mp3" type="audio/mp3">
+		</audio>
+		<script type = "text/javascript">
+		        var audio=document.getElementById("player");
+				audio.volume=1;		
+		        document.addEventListener('keydown', musicPlayjump);
+                function musicPlayjump() {
+			        document.getElementById('player').play();
+                    document.removeEventListener('keydown', musicPlayjump);
+                }
+			const Controller = function() {
+
+				this.left = this.right = this.up = false;
+
+			};
+
+			Controller.prototype.keyDownUp = function(event) {
+
+				var down = event.type == "keydown" ? true : false;
+
+				switch(event.keyCode) {
+					case 37: 
+					case 65:
+					document.getElementById('move').play();
+					this.left = down; break;
+					case 32:
+					case 38:
+					case 87:
+					document.getElementById('jump').play();
+					this.up = down; break;
+					case 39:
+					case 68: 
+					document.getElementById('move').play();
+					this.right = down; break;
+				}
+
+			};
+
+			const Player = function(x, y, source_x, source_w, behavior) {
+
+				this.source_x = source_x;
+				this.source_w = source_w;
+				this.behavior = behavior;
+
+				this.ox = this.x = x;
+				this.oy = this.y = y;
+				this.vx = this.vy = 0;
+
+			};
+
+			Player.prototype = {
+
+				behave:function() { this.behavior(this); },
+
+			};
+
+			const Dude = function(x, y, behavior) {
+
+				Player.call(this, x, y, 240, 16, behavior);
+
+				this.jumping = false;
+
+			};
+
+			Object.assign(Dude.prototype, Player.prototype);
+
+			function dudeBehavior(dude) {
+
+				if (!dude.jumping && controller.up) {
+
+					controller.up = false;
+					dude.vy -= 10;
+					dude.jumping = true;
+
+				}
+
+				if (controller.left) dude.vx -= 0.75;
+				if (controller.right) dude.vx += 0.75;
+
+				var airborne = true;
+
+				dude.vy += gravity;
+
+				dude.oy = dude.y;
+				dude.ox = dude.x;
+				dude.y += dude.vy;
+				dude.x += dude.vx;
+				if(dude.x>240){
+					airborne = false;
+					dude.x = 240;
+					dude.vx = 0;
+					dude.jumping = false;
+					dude.vy -= dude.vy * friction;
+				}
+				if(dude.x<0){
+					airborne = false;
+					dude.x = 0;
+					dude.vx = 0;
+					dude.jumping = false;
+					dude.vy -= dude.vy * friction;
+				}
+				if (dude.y > floor ) {
+					airborne = false;
+					dude.y = floor;
+					dude.vy = 0;
+					dude.jumping = false;
+					dude.vx -= dude.vx * friction;
+
+				}
+				if(dude.y<0 && dude.x<=120){	
+					window.location.replace("part2.html");
+				}
+
+				for (let index = platforms.length - 1; index > -1; -- index) {
+
+					let platform = platforms[index];
+
+					if (dude.x + tile_size * 0.5 > platform.left && dude.x + tile_size * 0.5 < platform.right) {
+
+						if (dude.y + tile_size > platform.floor && dude.oy + tile_size <= platform.oldFloor) {
+
+							airborne = false;
+							dude.y = platform.floor - tile_size;
+							dude.vy = platform.vy;
+							dude.jumping = false;
+							dude.vx += (platform.vx - dude.vx) * friction;
+
+						}
+
+					}
+
+				}
+
+				if (dude.jumping || airborne) {
+
+					dude.vx -= dude.vx * friction;
+
+				}
+
+
+			}
+
+			const Platform = function(x, y, big, behavior) {
+
+				Player.call(this, x, y, big ? 160 : 208, big ? 46 : 30, behavior);
+
+				this.anchor_x = x;
+				this.anchor_y = y;
+				this.d = 0;
+				this.w = big ? 32 : 16;
+
+			}
+
+			Platform.prototype = {
+
+				get floor() { return this.y + 4; },
+
+				get oldFloor() { return this.oy + 4; },
+
+				get left() { return this.x + 3; },
+				get right() { return this.x + 9 + this.w; }
+
+			};
+
+			Object.assign(Platform.prototype, Player.prototype);
+
+			function platformBehaviorX(platform) {
+
+				platform.d += 0.08;
+				platform.ox = platform.x;
+				platform.vx = platform.anchor_x + Math.cos(platform.d) * 40 - platform.x;
+				platform.x += platform.vx;
+
+			}
+			function platformBehaviorattack2(platform) {
+            if(platform.y<=floor){
+				platform.d += 0.2;
+                platform.oy = platform.y;                 
+			}
+			else{
+				k1=2;
+			}
+            platform.vy = platform.anchor_y + platform.d * 15 - platform.y;
+            platform.y += platform.vy;
+            }
+			function platformBehaviorattack(platform) {
+            if(platform.y<=floor){
+				platform.d += 0.2;
+                platform.oy = platform.y;                 
+			}
+			else{
+				k1=1;
+			}
+            platform.vy = platform.anchor_y + platform.d * 15 - platform.y;
+            platform.y += platform.vy;
+            }
+			function platformBehaviorbigattack(platform) {
+            if(platform.y<=floor){
+				platform.d += 0.2;
+                platform.oy = platform.y;                 
+			}
+            platform.vy = platform.anchor_y + platform.d * 10 - platform.y;
+            platform.y += platform.vy;
+            }
+			function platformBehaviorA(platform) {
+
+				platform.d += 0.08;
+				platform.ox = platform.x;
+				platform.vx = platform.anchor_x + Math.cos(platform.d) * 40 - platform.x;
+				platform.x += platform.vx;
+
+			}
+
+			function platformBehaviorY(platform) {
+
+				platform.d += 0.08;
+				platform.oy = platform.y;
+				platform.vy = platform.anchor_y + Math.sin(platform.d) * 5 - platform.y;
+				platform.y += platform.vy;
+
+			}
+			
+			function platformBehaviorXY(platform) {
+
+				platform.d += 0.08;
+				platform.ox = platform.x;
+				platform.vx = platform.anchor_x + Math.cos(platform.d) * 30 - platform.x;
+				platform.x += platform.vx;
+				platform.oy = platform.y;
+				platform.vy = platform.anchor_y + Math.sin(platform.d) * 30 - platform.y;
+				platform.y += platform.vy;
+
+			}
+			
+
+			var tile_set = new Image();
+			var tile_size = 16;
+			var map_columns = 16;
+			var map_rows = 12;
+			var map_ratio = map_columns / map_rows;
+			var map_scale = 1;
+			var map =[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+					  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+					  1,1,1,3,4,1,1,1,3,4,1,1,1,1,1,1,
+					  1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,1,
+					  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+					  1,4,1,1,1,1,3,4,1,1,1,1,3,4,1,1,
+					  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+					  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+					  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+					  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+					  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+					  2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2];
+
+			var floor = 164;
+			var friction = 0.4;
+			var gravity = 1;
+
+			var context = document.querySelector("canvas").getContext("2d");
+			var buffer = document.createElement("canvas").getContext("2d");
+
+			var screen_h = document.documentElement.clientHeight - 16;
+			var screen_w = document.documentElement.clientWidth - 16;
+
+			var controller = new Controller();
+
+			var platforms = [ new Platform(70, 20, true, platformBehaviorY), new Platform(120, 146, true, platformBehaviorX), new Platform(200, 96, false, platformBehaviorXY), new Platform(130,60, false, platformBehaviorA)];
+
+			var dude = new Dude(146,146, dudeBehavior);
+
+			function loop(time_step) {
+
+				window.requestAnimationFrame(loop);
+
+				screen_h = document.documentElement.clientHeight - 16;
+				screen_w = document.documentElement.clientWidth - 16;
+
+				if (screen_h / buffer.canvas.height < screen_w / buffer.canvas.width) screen_w = screen_h * map_ratio;
+				else screen_h = screen_w / map_ratio;
+
+				map_scale = screen_h / (map_rows * tile_size);
+
+				context.canvas.height = screen_h;
+				context.canvas.width = screen_w;
+				context.imageSmoothingEnabled = false;
+
+				for (let index = map.length - 1; index > -1; -- index) {
+
+					let value = map[index];
+					let tile_x = (index % map_columns) * tile_size;
+					let tile_y = Math.floor(index / map_columns) * tile_size;
+
+					buffer.drawImage(tile_set, value * tile_size, 0, tile_size, tile_size, tile_x, tile_y, tile_size, tile_size);
+
+				}
+
+				for (let index = platforms.length - 1; index > -1; -- index) {
+
+					let platform = platforms[index];
+
+					platform.behave();
+
+					buffer.drawImage(tile_set, platform.source_x, 0, platform.source_w, tile_size, Math.round(platform.x), Math.round(platform.y), platform.source_w, tile_size);
+
+				}
+
+				dude.behave();
+
+				buffer.drawImage(tile_set, dude.source_x, 0, tile_size, tile_size, Math.round(dude.x), Math.round(dude.y), tile_size, tile_size);
+
+				context.drawImage(buffer.canvas, 0, 0, buffer.canvas.width, buffer.canvas.height, 0, 0, context.canvas.width, context.canvas.height);
+
+			}
+
+			buffer.canvas.height = map_rows * tile_size;
+			buffer.canvas.width = map_columns * tile_size;
+
+			tile_set.addEventListener("load", (event) => { loop(); });
+			tile_set.src = "../Platforms/platform1.png";
+			window.addEventListener("keydown", (event) => { controller.keyDownUp(event); });
+			window.addEventListener("keyup", (event) => { controller.keyDownUp(event); });
+		</script>
+
+	</body>
+
+</html>

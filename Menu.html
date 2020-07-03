@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="author" content="HAMZA BENJELLOUN & IMADEDDINE ELAASSALI G.INFO">
+        <title>Instruction</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+        <style>    
+            body{
+                background-color: black;
+                background: url("Background/background.png");
+                color :white;
+
+            }           
+            fieldset{
+                background-color: black;
+                border-radius: 10px;
+                margin:5px;                
+            }
+            .menu{
+                margin-top: 5%;
+                margin-bottom:5%;
+                margin-left: 20%;
+                margin-right: 20%;
+                padding: 20px;
+                background: url("Menu/Menu.jpg");
+                background-size: cover;
+                border-radius: 10%;
+                opacity: 0.97;
+            }
+            b{
+                color :red;
+            }
+            h1{
+                text-align: center;
+            }
+            table{
+                margin-left: auto;
+                margin-right: auto;                
+            }
+            td{
+                width:300px;
+                text-align: center;
+                vertical-align: middle;
+                padding: 3%;
+            }
+        </style>
+    </head>
+    <body> 
+        <fieldset>     
+        <h1><b>Menu</b></h1>   
+        </fieldset>         
+        <fieldset class="menu">            
+            <table >
+            <tr><td><button value="0" onclick="gotopage(value)" class="btn btn-outline-dark">Instruction</button></td></tr>
+            <tr><td><button value="1" onclick="gotopage(value)" class="btn btn-outline-success">Level 1</button></td></tr>
+            <tr><td><button value="2" onclick="gotopage(value)" class="btn btn-outline-primary">Level 2</button></td></tr>
+            <tr><td><button value="3" onclick="gotopage(value)" class="btn btn-outline-secondary">Level 3</button></td></tr>
+            <tr><td><button value="4" onclick="gotopage(value)" class="btn btn-outline-warning">Level 4</button></td></tr>
+            <tr><td><button value="5" onclick="gotopage(value)" class="btn btn-outline-danger">Boss!!!</button></td></tr>
+            <tr><td><button value="6" onclick="gotopage(value)" class="btn btn-outline-light">Start The Game</button></td></tr>
+            </table>
+            </h1>
+        </fieldset>     
+        <script>		                
+            function gotopage(value) {
+                switch(value){
+                 case "0":
+                 window.location.replace("Instruction/Instruction.html");
+                 break;
+                 case "1":
+                 window.location.replace("Parts/part1.html");
+                 break;
+                 case "2":
+                 window.location.replace("Parts/part2.html");
+                 break;
+                 case "3":
+                 window.location.replace("Parts/part3.html");
+                 break;
+                 case "4":
+                 window.location.replace("Parts/part4.html");
+                 break;
+                 case "5":
+                 window.location.replace("Parts/boss.html");
+                 break;
+                 case "6":
+                 window.location.replace("Intro/Intro.html");
+                 break;
+                }                 
+            }                   
+        </script>
+        
+    </body>
+</html>
